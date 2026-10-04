@@ -118,8 +118,8 @@ back, with nothing uploaded. The same model runs in Android and iOS apps, which 
 source for now, and in a command-line tool that reads whole PDFs and folders of images in batch.
 
 It reads PDFs in any of the three encodings and screenshots, and in my own use it handles photos I
-take on my phone, posters included. In three published samples, a Zawgyi PDF, a legacy-font PDF and
-a typeset screenshot, none of the 563 lines came out garbled. I picked those three from a wider
+take on my phone and posters too. In three published samples, a Zawgyi PDF, a legacy-font PDF and a
+typeset screenshot, none of the 563 lines came out garbled. I picked those three from a wider
 screening, so they show it at its best. Across a bigger pile of books, about 9% of lines come out
 garbled.
 
