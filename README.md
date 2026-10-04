@@ -11,9 +11,14 @@ It's taken more than a year. The first models I tried read Mon as Burmese, which
 you know the history.
 
 Mon is an old language, spoken across Southeast Asia in what is now Myanmar and Thailand. Its
-earliest inscriptions are about 1,400 years old. The [last Mon
-kingdom](https://en.wikipedia.org/wiki/Mon_kingdoms) fell in 1757, and the language has lost ground
-since. UNESCO's 2010 atlas listed it as vulnerable.
+tradition reaches back further than anything written down: the founding story of the Shwedagon
+Pagoda says two Mon merchant brothers brought the Buddha's hair relics home more than 2,500 years
+ago. Historians can't confirm that. What they can confirm is old enough. Mon city-states grew up
+across the region during the first millennium, and the earliest Mon inscriptions date to around the
+sixth century.
+
+The [last Mon kingdom](https://en.wikipedia.org/wiki/Mon_kingdoms) fell in 1757, and the language
+has lost ground since. UNESCO's 2010 atlas listed it as vulnerable.
 
 Mon also gave Burmese its script. In the 11th century the Burmese king Anawrahta conquered the Mon
 city of Thaton, and the Burmese adapted the Mon script to write their own language. The two
@@ -76,8 +81,8 @@ no use to me, and the page images were fine.
 
 The first recogniser was a plain CNN. The first serious one used ResNet-18 and read lines 64 pixels
 high. Mon stacks vowel signs and small marks above and below each letter, and at that height they
-blurred together. The next version moved to MobileNetV3 with taller lines. That version still
-struggled with the denser combinations, and it had no attention layer.
+blurred together. The next version moved to MobileNetV3 with taller lines, but it still struggled
+with the denser combinations and had no attention layer.
 
 I also built a larger server design, a Swin transformer with an autoregressive decoder, and archived
 it before it finished training. It was heavy and a different kind of model to maintain. It also
@@ -138,7 +143,8 @@ is already built. And seven of the nine sources in the collection don't have an 
 yet, so I'm careful about what I call reusable.
 
 Looking back, most of the work wasn't training a model. It was finding out what the text really was
-before I trusted it: what a font drew, what an encoding meant and what a score was measuring.
+before I trusted it: what a font drew, what an encoding meant and what a score was measuring. If I
+started again, I'd check the data and the fonts before training anything.
 
 The RAG is still unfinished. But books that were only page images last September are text now, and
 the tools that read them are open source.
