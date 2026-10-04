@@ -86,8 +86,12 @@ worked against the whole point: a model that runs on a phone.
 The one I kept closest was the SVTR-style recogniser in PaddleOCR's mobile pipeline. It's a good
 design, and it was built for phones. I didn't switch because it would have meant throwing away the
 export and checks I'd already built for every platform. It's still the first alternative I'd go back
-to. I also passed on decoders that build in a language model. I wanted the output to come from the
-image, not from guesses about what Mon usually says.
+to.
+
+I also passed on decoders that build in a language model. I wanted the output to come from the
+image, not from guesses about what Mon usually says. That has a cost. When a letter is smudged, the
+model can't lean on the words around it. I'd rather see that error than have a model quietly cover
+it with a plausible Mon word.
 
 The current model, v3.5, is MobileNetV3-Large with two BiLSTM layers, a small attention block and a
 CTC head. It has about 11.5 million parameters, and the exported ONNX file is about 46 MB.
@@ -109,13 +113,13 @@ include the Mon letters. The data generator and the audit run the same test.
 
 ## Where it is now
 
-You can use the model three ways. A command-line tool reads whole PDFs and folders of images in
-batch. The [web app](https://ocr.mondevhub.com) runs it in the browser. And Android and iOS apps run
-it on the device, though for now you build them from source, since they aren't in the app stores.
+Today you can open the [web app](https://ocr.mondevhub.com), drop in a page, and get Unicode Mon
+back, with nothing uploaded. The same model runs in Android and iOS apps, which you build from
+source for now, and in a command-line tool that reads whole PDFs and folders of images in batch.
 
-It reads Mon from PDFs in any of the three encodings, and from screenshots. In my own use it reads
-photos I take on my phone, and posters. In three published samples, a Zawgyi PDF, a legacy-font PDF
-and a typeset screenshot, none of the 563 lines came out garbled. I picked those three from a wider
+It reads PDFs in any of the three encodings and screenshots, and in my own use it handles photos I
+take on my phone, posters included. In three published samples, a Zawgyi PDF, a legacy-font PDF and
+a typeset screenshot, none of the 563 lines came out garbled. I picked those three from a wider
 screening, so they show it at its best. Across a bigger pile of books, about 9% of lines come out
 garbled.
 
@@ -141,5 +145,6 @@ Looking back, most of the work wasn't training a model. It was finding out what 
 before I trusted it: what a font drew, what an encoding meant and what a score was measuring. If I
 started again, I'd check the data and the fonts before training anything.
 
-The RAG is still unfinished. But books that were only page images last September are text now, and
-the tools that read them are open source.
+The RAG is still unfinished. But it finally has something to search. Books that were only page
+images last September are text now, and the tools that read them are open source, for anyone else
+who wants to build on Mon.
