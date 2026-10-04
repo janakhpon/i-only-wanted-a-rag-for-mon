@@ -10,12 +10,8 @@ it searchable, and ask it questions. I thought it would take a weekend.
 It's taken more than a year. The first models I tried read Mon as Burmese, which makes sense once
 you know the history.
 
-Mon is an old language, spoken across Southeast Asia in what is now Myanmar and Thailand. Its
-tradition reaches back further than anything written down: the founding story of the Shwedagon
-Pagoda says two Mon merchant brothers brought the Buddha's hair relics home more than 2,500 years
-ago. Historians can't confirm that. What they can confirm is old enough. Mon city-states grew up
-across the region during the first millennium, and the earliest Mon inscriptions date to around the
-sixth century.
+Mon is an ancient language of Southeast Asia, spoken for well over a thousand years in what is now
+Myanmar and Thailand, with a tradition that reaches back more than 2,500 years.
 
 The [last Mon kingdom](https://en.wikipedia.org/wiki/Mon_kingdoms) fell in 1757, and the language
 has lost ground since. UNESCO's 2010 atlas listed it as vulnerable.
