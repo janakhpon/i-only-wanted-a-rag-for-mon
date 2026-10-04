@@ -15,10 +15,11 @@ Myanmar and Thailand, with a tradition that reaches back more than 2,500 years. 
 kingdom](https://en.wikipedia.org/wiki/Mon_kingdoms) fell in 1757, and the language has lost ground
 since. UNESCO's 2010 atlas listed it as vulnerable.
 
-Mon also gave Burmese its script. In the 11th century the Burmese king Anawrahta conquered the Mon
-city of Thaton, and the Burmese adapted the Mon script to write their own language. The two
-languages aren't related, but the scripts are close relatives. Mon still has letters that Burmese
-doesn't, so a model trained only on Burmese has nothing to say when it meets them.
+Mon is also widely held to be the source of the Burmese script. In the traditional account, the
+Burmese king Anawrahta conquered the Mon city of Thaton in the 11th century, and the Burmese adapted
+the Mon script to write their own language. The two languages aren't related, but the scripts are
+close relatives. Mon still has letters that Burmese doesn't, so a model trained only on Burmese has
+nothing to say when it meets them.
 
 So there wasn't much to start from. I couldn't find a tokenizer, a language detector or a dataset
 for Mon. I decided to make them, the NLP tools first and language models later. Every one of them
@@ -26,8 +27,8 @@ needed text.
 
 ## Finding the text
 
-I took whatever I could reach: Mon Wikipedia, a news site, posts from Facebook and Telegram, and a
-dictionary database. I put it all in one public collection,
+I took whatever I could reach: Mon Wikipedia, a news site, posts from Facebook and Telegram, a
+dictionary database, and a few smaller sets. I put it all in one public collection,
 [MonCorpusCollection](https://github.com/MonDevHub/MonCorpusCollection). It came to about 47 million
 characters, mostly from Wikipedia and the news site. That's enough to build tools on, and far too
 little to train a language model from scratch.
@@ -64,9 +65,9 @@ like this one ignore the numbers altogether. Unicode is recent in Myanmar publis
 was rare. Of the thirteen, ten were legacy fonts and three were Zawgyi. None was Unicode.
 
 Converting them wasn't an option either. Rabbit, the standard Zawgyi converter, is written for
-Burmese, and I couldn't find a reviewed one that handles Mon. Mon has eleven letters Burmese
-doesn't. They're a small share of any page, but about 60% of the Mon lines I counted use at least
-one.
+Burmese, and I couldn't find a reviewed one that handles Mon. Mon uses eleven characters that
+Burmese doesn't. They're a small share of any page, but about 60% of the Mon lines I counted use at
+least one.
 
 Then I saw what should have been obvious. The OCR doesn't care. The model reads pixels, so it never
 sees the encoding. That legacy-font book is one of the cleanest results I have. The text layers were
@@ -74,10 +75,11 @@ no use to me, and the page images were fine.
 
 ## How the model got here
 
-The first recogniser was a plain CNN. The first serious one used ResNet-18 and read lines 64 pixels
-high. Mon stacks vowel signs and small marks above and below each letter, and at that height they
-blurred together. The next version moved to MobileNetV3 with taller lines, but it still struggled
-with the denser combinations and had no attention layer.
+The first recogniser was a basic CRNN, a small convolutional network with an LSTM on top. The first
+serious one used ResNet-18 and read lines 64 pixels high. Mon stacks vowel signs and small marks
+above and below each letter, and at that height they blurred together. The next version moved to
+MobileNetV3 with taller lines, but it still struggled with the denser combinations and had no
+attention layer.
 
 I also built a larger server design, a Swin transformer with an autoregressive decoder, and archived
 it before it finished training. It was heavy and a different kind of model to maintain. It also
