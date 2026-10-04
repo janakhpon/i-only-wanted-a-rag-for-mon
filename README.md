@@ -11,10 +11,9 @@ It's taken more than a year. The first models I tried read Mon as Burmese, which
 you know the history.
 
 Mon is an ancient language of Southeast Asia, spoken for well over a thousand years in what is now
-Myanmar and Thailand, with a tradition that reaches back more than 2,500 years.
-
-The [last Mon kingdom](https://en.wikipedia.org/wiki/Mon_kingdoms) fell in 1757, and the language
-has lost ground since. UNESCO's 2010 atlas listed it as vulnerable.
+Myanmar and Thailand, with a tradition that reaches back more than 2,500 years. The [last Mon
+kingdom](https://en.wikipedia.org/wiki/Mon_kingdoms) fell in 1757, and the language has lost ground
+since. UNESCO's 2010 atlas listed it as vulnerable.
 
 Mon also gave Burmese its script. In the 11th century the Burmese king Anawrahta conquered the Mon
 city of Thaton, and the Burmese adapted the Mon script to write their own language. The two
