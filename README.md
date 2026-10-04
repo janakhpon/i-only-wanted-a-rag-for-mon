@@ -7,129 +7,147 @@ _Mon shares its script with Burmese, so the first models I tried read it as Burm
 I wanted a small RAG for Mon, my native language. The idea was simple: collect some Mon text, make
 it searchable, and ask it questions. I thought it would take a weekend.
 
-Mon is an old language, spoken across Southeast Asia in what is now Myanmar and Thailand. Its
-earliest inscriptions are about 1,400 years old. The [last Mon
+It's taken more than a year. The first models I tried read Mon as Burmese, which makes sense once
+you know the history.
+
+Mon is an ancient language of Southeast Asia, spoken for well over a thousand years in what is now
+Myanmar and Thailand, with a tradition that reaches back more than 2,500 years. The [last Mon
 kingdom](https://en.wikipedia.org/wiki/Mon_kingdoms) fell in 1757, and the language has lost ground
 since. UNESCO's 2010 atlas listed it as vulnerable.
 
-Mon also gave Burmese its script. In the 11th century the Burmese king Anawrahta conquered the Mon
-city of Thaton, and the Burmese adapted the Mon script to write their own language. The two
-languages aren't related, but the scripts are close relatives. Mon still has letters that Burmese
-doesn't, so an OCR model trained only on Burmese has no output for them.
+Mon is also widely held to be the source of the Burmese script. In the traditional account, the
+Burmese king Anawrahta conquered the Mon city of Thaton in the 11th century, and the Burmese adapted
+the Mon script to write their own language. The two languages aren't related, but the scripts are
+close relatives. Mon still has letters that Burmese doesn't, so a model trained only on Burmese has
+nothing to say when it meets them.
 
-It took a lot longer than a weekend. The first models I tried read Mon as Burmese. I couldn't find a
-tokenizer, a language detector or a dataset to start from. So I decided to make them, the NLP tools
-first. Language models would have to wait. Every one of those needed text.
+So there wasn't much to start from. I couldn't find a tokenizer, a language detector or a dataset
+for Mon. I decided to make them, the NLP tools first and language models later. Every one of them
+needed text.
 
 ## Finding the text
 
-I took whatever I could reach: Mon Wikipedia, a news site, posts from Facebook and Telegram, and a
-dictionary database. I put it all in one public collection,
+I took whatever I could reach: Mon Wikipedia, a news site, posts from Facebook and Telegram, a
+dictionary database, and a few smaller sets. I put it all in one public collection,
 [MonCorpusCollection](https://github.com/MonDevHub/MonCorpusCollection). It came to about 47 million
-characters, mostly from Wikipedia and the news site. That's too little to train a language model
-from scratch.
+characters, mostly from Wikipedia and the news site. That's enough to build tools on, and far too
+little to train a language model from scratch.
 
-The most promising text was somewhere else: in books, a pile of scanned ones. But a PDF of a book
-doesn't hand you text. Some of them were only page images. A person can read those, but a search
-index can't.
+The text I wanted most was in books, and most of the books were scans. A PDF of a page image is easy
+for a person to read and useless to a search index. To use them, I first had to turn them into text.
 
-## Reading the pages, and why it had to run on a phone
+## Reading the pages, on a phone
 
-The answer was OCR. Before I built anything, I looked into the tools that already existed: Kraken,
-Tesseract, TrOCR and PaddleOCR. I set up Kraken and a TrOCR fine-tuning script in September 2025,
-next to a small recogniser of my own. In the end I built my own for Mon. I never ran a proper
-comparison, so I can't tell you it beats the others on real pages. I still owe myself that test.
+That meant OCR. I looked at what already existed first: Kraken, Tesseract, TrOCR and PaddleOCR. In
+September 2025 I set up Kraken and a TrOCR fine-tuning script next to a small recogniser of my own.
+Mine is the one that stayed. I haven't run a head-to-head comparison on Mon pages yet, so I won't
+claim how it ranks. That test is on my list.
 
-What shaped the design was who I expected to use it. Most people who'd want to read these books are
-on phones, and many are in rural areas with a poor connection. An OCR service that needs an upload
-doesn't help someone who can't send a whole book. So I built the mobile model first, small enough to
-run on the device and work offline. A bigger server model could come later.
+The design came from who I expected to use it. Most people who'd want to read these books are on
+phones, and many are in rural areas with a poor connection. A service that needs you to upload a
+whole book doesn't help them. So I built the mobile model first, small enough to run on the device
+and work offline. A bigger server model could come later.
 
 ## Three ways to write the same letters
 
-Later I went back to the books that did have a text layer, to see what was in them. I checked
-thirteen, and one of them extracts like this:
+Later I went back to the books that did have a text layer, hoping to learn what was inside. I
+checked thirteen, and one of them extracts like this:
 
 `k[.j}tY`
 
-On screen, that page shows Mon. In the file it's plain ASCII. The book uses an old font that draws
-Mon letters on the slots meant for English ones. The letters only appear when that font is there to
-draw them.
+On screen, that page is Mon. In the file it's plain ASCII. The book uses an old font that draws Mon
+letters on the slots meant for English ones, so the Mon only exists while that font is drawing it.
 
 Myanmar script has been written down in at least three ways. Unicode gives every letter one agreed
-number. Zawgyi was the common way to type Burmese for years. It uses the same numbers but draws some
-of them as different letters, so the text looks right in one font and wrong in another. And the old
-legacy fonts, like this one, ignore those numbers altogether. Unicode is recent in Myanmar
-publishing, and for Mon it was rare. Of the thirteen, ten were legacy font-encoded ASCII and three
-were Zawgyi. None was Unicode.
+number. Zawgyi was the usual way to type Burmese for years. It uses the same numbers but draws some
+of them as different letters, so text looks right in one font and wrong in another. And old fonts
+like this one ignore the numbers altogether. Unicode is recent in Myanmar publishing, and for Mon it
+was rare. Of the thirteen, ten were legacy fonts and three were Zawgyi. None was Unicode.
 
-I looked for a converter. Rabbit, the standard Zawgyi converter, is written for Burmese, and as far
-as I could see its rules don't name any other language. I couldn't find a reviewed one for Mon. That
-matters. The Mon-only letters are rare on a page, but about 60% of the Mon lines I counted use at
-least one of the eleven that Burmese doesn't have.
+Converting them wasn't an option either. Rabbit, the standard Zawgyi converter, is written for
+Burmese, and I couldn't find a reviewed one that handles Mon. Mon uses eleven characters that
+Burmese doesn't. They're a small share of any page, but about 60% of the Mon lines I counted use at
+least one.
 
-The OCR doesn't care about any of this. The model reads pixels, so it never sees the encoding. A
-legacy-font book like that one is among the cleanest results in my test samples. The text layers
-were no use to me, and the page images were fine.
+Then I saw what should have been obvious. The OCR doesn't care. The model reads pixels, so it never
+sees the encoding. That legacy-font book is one of the cleanest results I have. The text layers were
+no use to me, and the page images were fine.
 
-## Models that didn't last
+## How the model got here
 
-Before the first serious model I had a plain CNN-based recogniser. The serious one used ResNet-18,
-which read lines at 64 pixels high. Mon puts vowel signs and medials, the small marks around a
-letter, above and below the line. At that height they were hard to resolve. The next one switched to
-MobileNetV3 with a taller input. That model lacked the capacity for complex diacritic combinations,
-and it had no attention.
+The first recogniser was a basic CRNN, a small convolutional network with an LSTM on top. The first
+serious one used ResNet-18 and read lines 64 pixels high. Mon stacks vowel signs and small marks
+above and below each letter, and at that height they blurred together. The next version moved to
+MobileNetV3 with taller lines, but it still struggled with the denser combinations and had no
+attention layer.
 
-I also built a first server design, a Swin transformer with an autoregressive decoder. I archived it
-before it ever finished training. The design was heavy and a different kind of model to maintain. It
-also worked against the whole point: a model that runs on a phone.
+I also built a larger server design, a Swin transformer with an autoregressive decoder, and archived
+it before it finished training. It was heavy and a different kind of model to maintain. It also
+worked against the whole point: a model that runs on a phone.
 
-The current one, v3.5, is MobileNetV3-Large with two BiLSTM layers, a small attention block and a
+The one I kept closest was the SVTR-style recogniser in PaddleOCR's mobile pipeline. It's a good
+design, and it was built for phones. I didn't switch because it would have meant throwing away the
+export and checks I'd already built for every platform. It's still the first alternative I'd go back
+to.
+
+I also passed on decoders that build in a language model. I wanted the output to come from the
+image, not from guesses about what Mon usually says. That has a cost. When a letter is smudged, the
+model can't lean on the words around it. I'd rather see that error than have a model quietly cover
+it with a plausible Mon word.
+
+The current model, v3.5, is MobileNetV3-Large with two BiLSTM layers, a small attention block and a
 CTC head. It has about 11.5 million parameters, and the exported ONNX file is about 46 MB.
 
-The hardest bug wasn't in any of them. I trained on synthetic lines: render text in a font, use that
-text as the label. One font, UniMon, turned out to be Zawgyi-encoded. The codepoints were right and
-several of the letters drawn were wrong. My validation lines, the ones I held back to score the
-model while it trained, used only that font. For a while the scores marked the model wrong for
-reading the image correctly.
+## The bug that looked like the model
 
-It was the same kind of problem as those book text layers, and it had been sitting in my own
-validation data.
+The hardest bug wasn't in any of those models. I trained on synthetic lines: render text in a font,
+and use that text as the label. One font, UniMon, turned out to be Zawgyi-encoded. It used the right
+Unicode numbers but drew several of them as the wrong letters. My validation lines, the ones I held
+back to score the model while it trained, used only that font. So for a while the scores marked the
+model wrong for reading the image correctly.
 
-I stopped trusting fonts by name. A font now has to pass a test before it's used. It must draw the
-right letter for each codepoint, and it must have the Mon letters at all. The data generator and the
-audit run the same test.
+It was the same problem as those text layers, only this time it was in my own data.
+
+When I found it, I wrote a check for exactly this. For a day the data generator still didn't call
+it, while a document said the checks were in place. The code said otherwise. Now every font has to
+pass one rule before it's used. It has to be real Unicode, not Zawgyi in disguise, and it must
+include the Mon letters. The data generator and the audit run the same test.
 
 ## Where it is now
 
-You can use the model three ways. A command-line tool reads whole PDFs and folders of images in
-batch. The [web app](https://ocr.mondevhub.com) runs it in the browser. And Android and iOS versions
-run it on the device. You have to build those from source for now, since they aren't in the app
-stores.
+Today you can open the [web app](https://ocr.mondevhub.com), drop in a page, and get Unicode Mon
+back, with nothing uploaded. The same model runs in Android and iOS apps, which you build from
+source for now, and in a command-line tool that reads whole PDFs and folders of images in batch.
 
-How well does it read? On 150 held-out lines, in a typeface the model never saw, about one character
-in a hundred comes out wrong, and about one line in seven has at least one error. The exact
-character error rate is 0.0100, with a 95% interval of 0.0056 to 0.0147. All 150 lines are
-synthetic, so it isn't a number for real pages. I haven't measured photographed ones yet. The [model
+It reads PDFs in any of the three encodings and screenshots, and in my own use it handles photos I
+take on my phone and posters too. In three published samples, a Zawgyi PDF, a legacy-font PDF and a
+typeset screenshot, none of the 563 lines came out garbled. I picked those three from a wider
+screening, so they show it at its best. Across a bigger pile of books, about 9% of lines come out
+garbled.
+
+On 150 held-out lines, in a typeface the model never saw, about one character in a hundred is wrong.
+The character error rate is 0.0100, with a 95% interval of 0.0056 to 0.0147. Those lines are
+synthetic, and I haven't put a number on photographs yet. The [model
 card](https://huggingface.co/janakhpon/monocr) has the details.
 
 The command-line tool is also what brought me back to where I started. I've been using it to read
-books from my archive, a page at a time, and the text goes into the same collection, in a folder of
-its own. It's machine OCR and nobody has proofread it. Each book has a record of its source and of
-which pages were kept. Pages that come out empty or garbled get dropped, so what's left is text the
-model produced something sensible for.
+books from my archive into the same collection, a page at a time. There are 16 texts in it so far.
+Each one has a record of its source and of which pages were kept. Pages that come out empty or
+garbled are dropped, and nobody has proofread the rest yet.
 
-## What's missing
+## What's next
 
-It isn't much yet. The OCR text in the corpus is still a small share of the 47 million characters,
-and none of it is proofread. I need real Mon pages with checked transcriptions, so I can measure
-accuracy where it matters and run that comparison with the existing tools properly. I want a bigger
-model for hard pages. Its training pipeline exists, but it hasn't produced a model I can measure
-yet. And seven of the nine sources I collected from have no established licence. I'd rather say that
-than call the whole collection free to use.
+MonOCR is still a work in progress. I work on it on weekends, fixing what breaks and improving
+what's there, and the corpus grows a book at a time. Next I want a reviewed set of real Mon pages,
+so I can measure accuracy where it matters and compare the model with Kraken, Tesseract and
+PaddleOCR properly. I still want a bigger server model for the hard pages, alongside the phone one.
+Its training pipeline is already built. And seven of the nine sources in the collection don't have
+an established licence yet, so I'm careful about what I call reusable.
 
 Looking back, most of the work wasn't training a model. It was finding out what the text really was
-before I trusted it: what a font drew, what an encoding meant and what a score was measuring.
+before I trusted it: what a font drew, what an encoding meant and what a score was measuring. If I
+started again, I'd check the data and the fonts before training anything.
 
-The RAG is still unfinished. But some of the books that were only page images last September are
-text now.
+The RAG is still unfinished. But it finally has something to search. Books that were only page
+images last September are text now, and the tools that read them are open source, for anyone else
+who wants to build on Mon.
