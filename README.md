@@ -135,11 +135,12 @@ garbled are dropped, and nobody has proofread the rest yet.
 
 ## What's next
 
-The corpus grows a book at a time. Next I want a reviewed set of real Mon pages, so I can measure
-accuracy where it matters and compare the model with Kraken, Tesseract and PaddleOCR properly. I
-still want a bigger server model for the hard pages, alongside the phone one. Its training pipeline
-is already built. And seven of the nine sources in the collection don't have an established licence
-yet, so I'm careful about what I call reusable.
+MonOCR is still a work in progress. I work on it on weekends, fixing what breaks and improving
+what's there, and the corpus grows a book at a time. Next I want a reviewed set of real Mon pages,
+so I can measure accuracy where it matters and compare the model with Kraken, Tesseract and
+PaddleOCR properly. I still want a bigger server model for the hard pages, alongside the phone one.
+Its training pipeline is already built. And seven of the nine sources in the collection don't have
+an established licence yet, so I'm careful about what I call reusable.
 
 Looking back, most of the work wasn't training a model. It was finding out what the text really was
 before I trusted it: what a font drew, what an encoding meant and what a score was measuring. If I
